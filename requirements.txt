@@ -1,0 +1,6 @@
+typing 
+fastapi
+pydantic 
+requests
+datetime
+pytz
