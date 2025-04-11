@@ -6,12 +6,13 @@ import pytz
 from dotenv import load_dotenv
 import os
 import uvicorn
-import json
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
+app = FastAPI()
 root_url = "https://api.openweathermap.org/data/3.0/onecall?"
 c = "current"
+
 
 #gets location from state/zipcode
 def get_location(state, zipcode):
@@ -25,7 +26,7 @@ def get_location(state, zipcode):
 
 
 #pulls data from url
-def get_weather(zip: str, lat, lon):
+def get_weather(lat, lon):
    print("Getting weather...")
    exclude = "hourly,daily,minutely"
    url = f"{root_url}lat={lat}&lon={lon}&exclude={exclude}&appid={API_KEY}".strip(
@@ -93,16 +94,13 @@ def build_message(str_time, str_temp, str_humidity, str_cloudPercent):
 
 
 #main function to run all functions
-
-def lambda_handler(event, context):
+@app.get("/weather", response_class=PlainTextResponse)
+def main():
    print("Running main...")
-   
-   zip_code = event["queryStringParameters"]["zip"]
 
-   
    #lat, lon = get_location("NJ", "08043")
    lon, lat = hardcode_location()
-   weather_info = get_weather(context, lat, lon)
+   weather_info = get_weather(lat, lon)
    weather_info, time = weather_time(weather_info)
    weather_info, temp = weather_temp(weather_info)
    weather_info, humidity = weather_humidity(weather_info)
@@ -112,10 +110,10 @@ def lambda_handler(event, context):
    message = build_message(str_time, str_temp, str_humidity, str_cloudPercent)
    print("Message built!")
    print(message)
-   return {
-      "statusCode": 200,
-      "headers":{
-         "Content-Type": "text/plain"
-      },
-      "body": message
-   }
+   return message
+
+
+main()
+
+if __name__ == "__main__":
+   uvicorn.run("main:app", host="0.0.0.0", port=8000)
