@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather Lookup</title>
+</head>
+<body>
+  <h2>Check Your Local Weather</h2>
+
+  <input type="text" id="zipInput" placeholder="Enter ZIP code">
+  <button onclick="getWeather()">Get Weather</button>
+
+  <pre id="weatherOutput">Weather will appear here...</pre>
+
+  <script>
+    function getWeather() {
+      const zip = document.getElementById("zipInput").value;
+      const output = document.getElementById("weatherOutput");
+
+      if (!zip) {
+        output.innerText = "Please enter a ZIP code.";
+        return;
+      }
+
+      const url = `https://8ntztkx6d5.execute-api.us-east-1.amazonaws.com/prod/Weather?zip=${zip}`;
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error("API error");
+          return res.text();
+        })
+        .then(data => {
+          output.innerText = data;
+        })
+        .catch(err => {
+          output.innerText = "Something went wrong: " + err.message;
+        });
+    }
+  </script>
+</body>
+</html>

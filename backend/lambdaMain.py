@@ -2,6 +2,7 @@ import requests
 import datetime
 import pytz
 import os
+import json
 
 API_KEY = os.environ["API_KEY"]
 root_url = "https://api.openweathermap.org/data/3.0/onecall?"
@@ -22,7 +23,7 @@ def get_location(zipcode):
 
 #pulls data from url
 def get_weather(lat, lon):
-   print("Getting weather...")
+   print("Getting weather... at lon: {lon} and lat: {lat}")
    exclude = "hourly,daily,minutely"
    url = f"{root_url}lat={lat}&lon={lon}&exclude={exclude}&appid={API_KEY}".strip(
    )
@@ -96,8 +97,9 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "body": "Missing or invalid 'zip' parameter"
         }
+   zip_code = str(zip_code)
    #lat, lon = get_location("NJ", "08043")
-   lon, lat, loc_name = get_location(zip_code) #calls event for input of zip, returns lon, lat of location
+   lat, lon, loc_name = get_location(zip_code) #calls event for input of zip, returns lon, lat of location
    weather_info = get_weather(lat, lon) 
    datetime = weather_time(weather_info)
    weather_info, temp = weather_temp(weather_info)
@@ -109,9 +111,10 @@ def lambda_handler(event, context):
    print("Message built!")
    print(message)
    return {
-      "statusCode": 200,
-      "headers":{
-         "Content-Type": "text/plain"
-      },
-      "body": message
-   }
+    "statusCode": 200,
+    "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*"
+    },
+    "body": message
+}
