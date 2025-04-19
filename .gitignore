@@ -4,3 +4,4 @@ __pycache__/
 *pycache__
 archive/
 .env
+.zip
