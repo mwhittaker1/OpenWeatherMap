@@ -9,7 +9,7 @@
   <input type="text" id="zipInput" placeholder="Enter ZIP code">
   <button onclick="getWeather()">Get Weather</button>
 
-  <pre id="weatherOutput">Weather will appear here...</pre>
+  <pre id="weatherOutput">Enter a zipcode to recieve current weather.</pre>
 
   <script>
     function getWeather() {
@@ -22,17 +22,32 @@
       }
 
       const url = `https://8ntztkx6d5.execute-api.us-east-1.amazonaws.com/prod/Weather?zip=${zip}`;
+      let invalidChars = "";
 
+
+      if (isNaN(Number(zip))){
+        for (let char of zip) {
+          if (isNaN(char)) {
+            invalidChars += char+" ";
+              }
+                }
+            output.innerText = `Zipcode contains the invalid characters: ${invalidChars}.`
+            throw new Error(`Invalid character found, zipcode must contain 5 numbers, invalid characters found: ${invalidChars}`);}
+      
+      if (zip.length !== 5) {
+        output.innerText = `Zipcode must be 5 digits. You entered ${zip.length}.`
+        throw new Error(`Zipcode must be 5 digits. You entered ${zip.length}.`);
+        }
       fetch(url)
         .then(res => {
-          if (!res.ok) throw new Error("API error");
+          if (!res.ok) throw new Error("internal error, unable to fetch data. Please contact the adminstrator.");
           return res.text();
         })
         .then(data => {
           output.innerText = data;
         })
         .catch(err => {
-          output.innerText = "Something went wrong: " + err.message;
+          output.innerText = ":( Something went wrong, please check if you're using a valid zipcode. \nError message: " + err.message;
         });
     }
   </script>

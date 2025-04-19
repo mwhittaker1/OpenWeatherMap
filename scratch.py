@@ -3,7 +3,7 @@ import datetime
 import pytz
 import os
 
-API_KEY = "be075386dbc2d586f564edbca78d530a"
+API_KEY = "xxxx"
 root_url = "https://api.openweathermap.org/data/3.0/onecall?"
 c = "current"
 lon = -74.949203
