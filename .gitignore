@@ -4,4 +4,10 @@ __pycache__/
 *pycache__
 archive/
 .env
-.zip
+*.zip
+package/
+backend/package/
+backend/lambda_test.py
+backend/weatherzipcode.py
+backend/fast_api_main.py
+lambda_package.zip
